@@ -5,5 +5,6 @@ public class Main {
 
         SeriesModel seriesModel = new SeriesModel();
         seriesModel.launch();
+
     }
 }

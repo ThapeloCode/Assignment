@@ -85,46 +85,43 @@ public class SeriesModel {
 
     }
 
-    private void removalAlgorithm(String seriesId){
-
-        int container = -1;
-
-        for (int row = 0; row < history.length; row++){
-            if(history[row][0].contains(seriesId)){
-                System.out.println("Found!!!");
-                container = row;
-                if (history.length > 1) {
-                    elasticStorage = new String[history.length - 1][COLUMNS];
-                    System.out.println("It exists!!!");
-                    for (row = 0; row < elasticStorage.length; row++) {
-                        for (int columb = 0; columb < COLUMNS; columb++) {
-                            if (row == container) {
-                                System.out.println("That row!!!");
-                                System.out.println(row);
-                                elasticStorage[row][columb] = history[row++][columb];
-                                System.out.println(row);
-                            } else {
-                                System.out.println(row);
-                                System.out.println("Adding!!!");
-                                elasticStorage[row][columb] = history[row][columb];
-                            }
-                        }
-
-                    }
-                } else {
-                    System.out.println("Remove Everything!!!");
-                    history = null;
-                    break;
-                }
-            }
-            System.out.println("Not Found!!!");
+    private void removalAlgorithm(String seriesId) {
+        // Check if history is empty or invalid
+        if (history == null || history.length == 0 || history[0] == null) {
+            System.out.println("History is Empty!!!");
+            return; // Nothing to delete
         }
 
+        // Find the row index with matching seriesId (assuming ID is in column 0)
+        int rowToDelete = -1;
+        for (int row = 0; row < history.length; row++) {
+            if (history[row][0].equals(seriesId)) {
+                rowToDelete = row;
+                break;
+            }
+        }
 
+        // If ID not found, exit
+        if (rowToDelete == -1)
+            return;
 
+        // Create new storage with reduced size
+        size--;
+        String[][] elasticStorage = new String[size][COLUMNS];
 
+        // Copy all rows except the deleted one
+        for (int row = 0, newRow = 0; row < history.length; row++) {
+            if (row != rowToDelete) {
+                for (int column = 0; column < COLUMNS; column++) {
+                    elasticStorage[newRow][column] = history[row][column];
+                }
+                newRow++;
+            }
+        }
+
+        // Update history reference
+        history = elasticStorage;
     }
-
 
     //Flexible Memory/Array"
     private void captureAlgorithm(){
