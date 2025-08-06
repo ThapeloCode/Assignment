@@ -86,6 +86,51 @@ public class SeriesModel {
     }
 
     private void removalAlgorithm(String seriesId) {
+    /*This method will start off by decreasing the elastic Array(elasticStorage[][]) by one from the previous elastic,
+    Secondly it will copy all rows from history Array(history[][]) except the one matching seriesId into the new reduced elastic Array(elasticStorage[][]),
+    Lastly it will update the history Array(history[][]) with the reduced elastic Array*/
+
+        //Checking Empty History
+        if (history == null || history.length == 0 || history[0] == null) {
+            System.out.println("History is Empty!!!");
+            return; // Nothing to delete
+        }
+
+        //Find the row to delete (assuming ID is in column 0)
+        int rowToDelete = -1;
+        for (int row = 0; row < history.length; row++) {
+            if (history[row][0].equals(seriesId)) {
+                rowToDelete = row;
+                break;
+            }
+        }
+
+        //If ID not found, exit
+        if (rowToDelete == -1) {
+            System.out.println("Series ID " + seriesId + " not found!");
+            return;
+        }
+
+        //Decrease The Elastic Storage by Single Row From History
+        size--;
+        String[][] elasticStorage = new String[size][COLUMNS];
+
+        //Copy all rows except the one to delete
+        for (int row = 0, newRow = 0; row < history.length; row++) {
+            if (row != rowToDelete) {
+                //Copy History Rows (to reduced memory)
+                for (int column = 0; column < COLUMNS; column++) {
+                    elasticStorage[newRow][column] = history[row][column];
+                }
+                newRow++;
+            }
+        }
+
+        //Take All the Reduced Array(elasticStorage) and Copy to History
+        history = elasticStorage;
+    }
+
+    /*private void removalAlgorithm(String seriesId) {
         // Check if history is empty or invalid
         if (history == null || history.length == 0 || history[0] == null) {
             System.out.println("History is Empty!!!");
@@ -121,7 +166,7 @@ public class SeriesModel {
 
         // Update history reference
         history = elasticStorage;
-    }
+    }*/
 
     //Flexible Memory/Array"
     private void captureAlgorithm(){
@@ -258,7 +303,7 @@ public class SeriesModel {
 
     //Print All Existing Rows
     private void printSeries(){
-        if (this.history == null){
+        if (history == null || history.length == 0 || history[0] == null){
             System.out.println("History Empty!!!");
         }else {
             for (int x = 0; x < history.length; x++) {
