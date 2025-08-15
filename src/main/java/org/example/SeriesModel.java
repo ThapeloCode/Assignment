@@ -127,7 +127,7 @@ public class SeriesModel {
     }
 
     //Flexible Memory/Array
-    private void captureAlgorithm(){
+    void captureAlgorithm(){
         /*This method will start off by increasing the elastic Array(elasticStorage[][]) by one from the previous elastic,
         Secondly it will add history Array(history[][]) into the new expanded elastic Array(elasticStorage[][]),
         Thirdly it will take new input from user and add into memory Array(memory[][]) into the elastic Array.
@@ -210,7 +210,7 @@ public class SeriesModel {
     }
 
     //Setter Method (All input)
-    private void captureSeries(){
+    void captureSeries(){
 
         System.out.println("CAPTURE A NEW SERIES");
         System.out.println("******************************************");
@@ -333,7 +333,7 @@ public class SeriesModel {
     }
 
     //Print Row x
-    private void printingConsole(int x){
+    void printingConsole(int x){
 
 
         System.out.println("Series  " +  (x + 1));
@@ -356,12 +356,24 @@ public class SeriesModel {
         }
     }
 
-    private void emptyDataChecker(){
+    void emptyDataChecker(){
 
         if(history == null || history[0] == null || history.length == 0 ){
             System.out.println("Database empty!!!");
             launch();
         }
+    }
+
+    String[][] getMemory() {
+        return memory;
+    }
+
+    String[][] getHistory() {
+        return history;
+    }
+
+    void setHistory(String[][] newHistory) {
+        history = newHistory;
     }
 
 }
