@@ -14,7 +14,6 @@ public class SeriesModel {
     private final byte COLUMNS = 4;
 
     private final Scanner scanner = new Scanner(System.in);
-    String[][] elasticStorage;
     private final String[][] memory = new String[1][COLUMNS];
     private String[][] history;
 
@@ -75,7 +74,7 @@ public class SeriesModel {
                 break;
 
             case 5:
-                printSeries();
+                seriesPrint();
                 launch();
                 break;
             case 6:
@@ -91,10 +90,7 @@ public class SeriesModel {
     Lastly it will update the history Array(history[][]) with the reduced elastic Array*/
 
         //Checking Empty History
-        if (history == null || history.length == 0 || history[0] == null) {
-            System.out.println("History is Empty!!!");
-            return; // Nothing to delete
-        }
+        emptyDataChecker();
 
         //Find the row to delete (assuming ID is in column 0)
         int rowToDelete = -1;
@@ -130,45 +126,7 @@ public class SeriesModel {
         history = elasticStorage;
     }
 
-    /*private void removalAlgorithm(String seriesId) {
-        // Check if history is empty or invalid
-        if (history == null || history.length == 0 || history[0] == null) {
-            System.out.println("History is Empty!!!");
-            return; // Nothing to delete
-        }
-
-        // Find the row index with matching seriesId (assuming ID is in column 0)
-        int rowToDelete = -1;
-        for (int row = 0; row < history.length; row++) {
-            if (history[row][0].equals(seriesId)) {
-                rowToDelete = row;
-                break;
-            }
-        }
-
-        // If ID not found, exit
-        if (rowToDelete == -1)
-            return;
-
-        // Create new storage with reduced size
-        size--;
-        String[][] elasticStorage = new String[size][COLUMNS];
-
-        // Copy all rows except the deleted one
-        for (int row = 0, newRow = 0; row < history.length; row++) {
-            if (row != rowToDelete) {
-                for (int column = 0; column < COLUMNS; column++) {
-                    elasticStorage[newRow][column] = history[row][column];
-                }
-                newRow++;
-            }
-        }
-
-        // Update history reference
-        history = elasticStorage;
-    }*/
-
-    //Flexible Memory/Array"
+    //Flexible Memory/Array
     private void captureAlgorithm(){
         /*This method will start off by increasing the elastic Array(elasticStorage[][]) by one from the previous elastic,
         Secondly it will add history Array(history[][]) into the new expanded elastic Array(elasticStorage[][]),
@@ -202,10 +160,13 @@ public class SeriesModel {
             }
             //Take All the Expanded Array(elasticStorage) and Copy to History
             history = elasticStorage;
+            System.out.println("Series processed successfully!!!");
         }
     }
 
     private void searchSeries(String seriesId){
+
+        emptyDataChecker();
 
         //Loop Through history
         for (int x = 0; x < history.length; x++ ){
@@ -226,6 +187,8 @@ public class SeriesModel {
 
     //Update Method (Excluding ID)
     private void updateSeries(String seriesId){
+
+        emptyDataChecker();
 
         for (int x = 0; x < history.length; x++ ){
 
@@ -260,7 +223,7 @@ public class SeriesModel {
     }
 
     //Setter Method (Excluding ID)
-    private void inputSetter(int x){
+    /*private void inputSetter(int x){
 
         scanner.nextLine();
         //\n
@@ -271,12 +234,93 @@ public class SeriesModel {
 
         System.out.print("Enter Series Age Restriction  :   ");
         seriesAge = scanner.next();
+        seriesAge = scanner.next();
         memory[x][2] = seriesAge;
 
         System.out.print("Number Of Episodes            :   ");
         seriesNumberOfEpisodes = scanner.next();
         memory[x][3] = seriesNumberOfEpisodes;
 
+    }*/
+
+    private void inputSetter(int x) {
+        scanner.nextLine(); // Clear the buffer
+
+        // Series Name Validation (non-empty)
+        boolean validInput = false;
+        while (!validInput) {
+            System.out.print("Enter Series Name             :   ");
+            seriesName = scanner.nextLine().trim();
+
+            if (seriesName.isEmpty()) {
+                System.out.println("Error: Series name cannot be empty!");
+                System.out.print("Press 'Enter' to try again or '0' to quit...");
+                String choice = scanner.nextLine();
+                if (choice.equalsIgnoreCase("0")) {
+                    launch(); // Exit the method
+                }
+            } else {
+                memory[x][1] = seriesName;
+                validInput = true;
+            }
+        }
+
+        // Age Restriction Validation (2-18)
+        validInput = false;
+        while (!validInput) {
+            System.out.print("Enter Series Age Restriction  :   ");
+            seriesAge = scanner.next().trim();
+
+            if (seriesAge.matches("\\d+")) {  // Check if numeric
+                byte age = (byte)Integer.parseInt(seriesAge);
+                if (age >= 2 && age <= 18) {
+                    memory[x][2] = seriesAge;
+                    validInput = true;
+                } else {
+                    System.out.println("Error: Age must be between 2 and 18!");
+                }
+            } else {
+                System.out.println("Error: Please enter a valid number between 2 and 18!");
+            }
+
+            if (!validInput) {
+                System.out.print("Press 'Enter' to try again or '0' to quit...");
+                scanner.nextLine(); // Clear buffer
+                seriesId = scanner.nextLine();
+                if (seriesId.equalsIgnoreCase("0")) {
+                    launch(); // Exit the method
+                }
+            }
+        }
+
+        // Number of Episodes Validation (positive integer)
+        validInput = false;
+        while (!validInput) {
+            System.out.print("Number Of Episodes            :   ");
+            seriesNumberOfEpisodes = scanner.next().trim();
+
+            if (seriesNumberOfEpisodes.matches("\\d+")) {
+                int episodes = Integer.parseInt(seriesNumberOfEpisodes);
+                if (episodes > 0) {
+                    memory[x][3] = seriesNumberOfEpisodes;
+                    validInput = true;
+                } else {
+                    System.out.println("Error: Must have at least 1 episode!");
+                }
+            } else {
+                System.out.println("Error: Please enter a valid number!");
+            }
+
+            if (!validInput) {
+                System.out.print("Press Enter to try again or '0' to quit...");
+                scanner.nextLine(); // Clear buffer
+                String choice = scanner.nextLine();
+                if (choice.equalsIgnoreCase("0")) {
+                    launch(); // Exit the method
+                }
+            }
+        }
+        scanner.nextLine(); // Clear the final newline
     }
 
     //This Method Copy Current Memory Row to History x Row
@@ -291,6 +335,7 @@ public class SeriesModel {
     //Print Row x
     private void printingConsole(int x){
 
+
         System.out.println("Series  " +  (x + 1));
         System.out.println("-------------------------------------------");
         System.out.println("SERIES ID                   :   " + history[x][0]);
@@ -302,15 +347,21 @@ public class SeriesModel {
     }
 
     //Print All Existing Rows
-    private void printSeries(){
-        if (history == null || history.length == 0 || history[0] == null){
-            System.out.println("History Empty!!!");
-        }else {
-            for (int x = 0; x < history.length; x++) {
-                printingConsole(x);
-            }
-        }
+    private void seriesPrint(){
 
+        emptyDataChecker();
+
+        for (int x = 0; x < history.length; x++) {
+            printingConsole(x);
+        }
+    }
+
+    private void emptyDataChecker(){
+
+        if(history == null || history[0] == null || history.length == 0 ){
+            System.out.println("Database empty!!!");
+            launch();
+        }
     }
 
 }
